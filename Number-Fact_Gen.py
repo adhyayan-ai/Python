@@ -1,8 +1,3 @@
-#New file
-#Enter a list of numbers seperated by spaces. You will then get many facts listed about your list.
-#You will get information such as the minimum and maximum numbers, your list length (and suggestions based on your list length, and more! 
-#Try this fun prgram now!
-
 numbers = input("Enter yout list of number seperated by spaces: ")
 
 n = numbers.split(" ")
