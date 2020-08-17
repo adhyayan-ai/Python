@@ -16,12 +16,12 @@ for a in n:
    a = int(a)
    if l < a :
       l = a
-      print(l)
+  
 
 
    if s > a :
       s = a
-      print(s)
+
 
 def state_facts(x):
 
@@ -30,7 +30,7 @@ def state_facts(x):
    elif length >= 5 and length < 10:
       print("Your list length was a good", length, "numbers!")
    elif length >= 10 and length <= 20:
-      print("Your list contained a whopping", length, "long! Wow")
+      print("Your list contained a whopping", length, "numbers!! Wow")
    elif length > 20:
       print("YOUR LIST CONTAINED", length, "NUMBERS?!?! UNBELIEVABLE! Thanks for taking the time and effort to write all of that. :)")
    else:
