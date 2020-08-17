@@ -14,7 +14,7 @@ for i in range(2, (num - 1)):
         prime = ("Yes, " + str(num) + " is prime.")
 
     else:
-        print("No, " + str(num) +  " is not prime.")
+        prime = ("No, " + str(num) +  " is not prime.")
         break
     
         
@@ -22,8 +22,7 @@ for i in range(2, (num - 1)):
 
 
 
-if not prime == None:
-    print(prime)
+print(prime)
 
 choice = input("Would you also like a list of factors for " + str(num) + " ? ")
 
@@ -31,7 +30,7 @@ choice = choice.upper()
 
 if choice == "YES" or "YEAH":
     if not prime == ("Yes, " + str(num) + " is prime."):
-        print(" ,".join(factors))
+        print("1,",(" ,".join(factors)), str(num))
         #:>)
     else:
         print("1,", str(num))
