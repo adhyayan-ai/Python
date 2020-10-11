@@ -8,10 +8,11 @@ while count < condition:
     if w[count - 1] == w[count - (count * 2)]:
         pass
     elif w[count - 1] != w[count - (count * 2)]:
-        print("Not a palindrome.")
+        print(w)
         quit()
     else:
         print("Something else went wrong. Please contact the developers. ")
         quit()
     count += 1
+print(w)
 print("Palindrome!")
