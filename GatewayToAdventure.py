@@ -32,7 +32,6 @@ class SurvivalQuiz(Quiz):
 class GameWorld:
     time = 1
     user = ""
-    capitalCity: ""
 
     def __init__(self, name='gameWorld', typeW='all', city='capitalCity'):
         self.worldName = name
@@ -49,6 +48,13 @@ class GameWorld:
             answer = input(question[0] + "\n: ")
             if answer == question[1]:
                 questionsRight += 1
+            elif answer.capitalize() == "Quit":
+                # User wants to Quit the Game now
+                print(f"User wants to quit the game now")
+                questionsRight = "Quit"
+                break
+        
+        questionsRight = str(questionsRight)
         return questionsRight
 
     def survivalQuizMethod(self, questionAndAnswer):
@@ -57,6 +63,13 @@ class GameWorld:
             answer = input(question[0] + "\n: ")
             if answer == question[1]:
                 questionsRight += 1
+            elif answer.capitalize() == "Quit":
+                # User wants to Quit the Game now
+                print(f"User wants to quit the game now")
+                questionsRight = "Quit"
+                break
+        
+        questionsRight = str(questionsRight)    
         return questionsRight
 
     def timercounter(self):
@@ -64,7 +77,7 @@ class GameWorld:
 
     def getEssentialList(self):
         print(f"Reached {self.worldName}")
-        print(''.join(self.essentials))
+        #print(''.join(self.essentials))
         return self.essentials
 
     def __str__(self):
@@ -79,6 +92,7 @@ class Nixoterra(GameWorld):
         self.worldName = "Nixoterra"
         self.worldType = "SnowWorld"
         self.essentials = ["Plough", "Car"]
+        self.capitalCity = "cNTerra"
         self.qualifyingQuiz = QualifyingQuiz(Nixoterra.qNADictQ)
         self.survivalQuiz1 = SurvivalQuiz(Nixoterra.qNADictS1)
         self.survivalQuiz2 = SurvivalQuiz(Nixoterra.qNADictS2)
@@ -92,6 +106,7 @@ class Silvia(GameWorld):
         self.worldName = "Silvia"
         self.worldType = "ForestWorld"
         self.essentials = ["axe", "fire"]
+        self.capitalCity = "cSilvia"
         self.qualifyingQuiz = QualifyingQuiz(Silvia.qNADictQ)
         self.survivalQuiz1 = SurvivalQuiz(Silvia.qNADictS1)
         self.survivalQuiz2 = SurvivalQuiz(Silvia.qNADictS2)
@@ -104,6 +119,7 @@ class Aquamundi(GameWorld):
     def __init__(self):
         self.worldName = "Aquamundi"
         self.worldType = "WaterWorld"
+        self.capitalCity = "cAMundi"
         self.essentials = ["FishHunt", "LifeJacket", "snorkelKit"]
         self.qualifyingQuiz = QualifyingQuiz(Aquamundi.qNADictQ)
         self.survivalQuiz1 = SurvivalQuiz(Aquamundi.qNADictS1)
@@ -117,6 +133,7 @@ class Montelocus(GameWorld):
     def __init__(self):
         self.worldName = "Montelocus"
         self.worldType = "MountainWorld"
+        self.capitalCity = "cMlocus"
         self.essentials = ["rope", "harness"]
         self.qualifyingQuiz = QualifyingQuiz(Montelocus.qNADictQ)
         self.survivalQuiz1 = SurvivalQuiz(Montelocus.qNADictS1)
@@ -135,15 +152,24 @@ class User:
     def collectGem(self):
         self.gems += 1
 
-    def buyGem(self):
-        self.coins -= 25
-        self.gems += 1
+    def buyGem(self, amount):
+        returnVal = False
+        if self.spendCoin(amount=25):
+            self.gems += 1
+            returnVal = True
+        
+        return returnVal
 
     def earnCoin(self, amount):
         self.coins += amount
 
     def spendCoin(self, amount):
-        self.coins -= amount
+        returnVal = False
+        if self.coins >= amount:
+            self.coins -= amount
+            returnVal = True
+
+        return returnVal
 
     def getCoins(self):
         return self.coins
@@ -152,7 +178,7 @@ class User:
         return self.gems
 
     def buyEssentials(self):
-        ls = list(self.location.getEssentialList())
+        ls = self.location.getEssentialList()
         print (ls)
         sizeEssentialList = len(ls)
         essentialsList = []
@@ -209,18 +235,16 @@ class User:
    #    return 1
 
 class GameSystem:
-    coins = 100
-    name = ""
-    worldType = ""
-    timer = 0
-    gameQuitted = False
-    minCorrectAnswers = 1
-    minGems = 4
-    minCoins = 100
-    minGemCapitalCity = 3
    
     def __init__(self, state=False):
         self.gameQuitted = state
+        self.coins = 100
+        self.name = "Gateway To Adventure"
+        self.minCorrectAnswers = 1
+        self.minGems = 4
+        self.minCoins = 100
+        self.minGemCapitalCity = 3
+        self.buyGemAmount = 25
 
     def gameStart(self):        
         #if userLocation.capitalize() in ["Nixoterra", "Silvia", "Aquamundi", "Montelocus"]:
@@ -230,7 +254,9 @@ class GameSystem:
         print(f"{bcolors.OKGREEN}Hello, and welcome to {bcolors.BOLD}Gateway of Adventure!{bcolors.ENDC}") 
         userName = input(f"{bcolors.OKBLUE}What is your name? {bcolors.ENDC}")
         validInput = False
-        while (validInput is False):
+        gameReturn = False
+        
+        while validInput is False:
             userLocation = input(f"{bcolors.YELLOW}Choose a world from the following: {bcolors.BOLD}Nixoterra, Silvia, Aquamundi, or Montelocus : {bcolors.ENDC}")
             if userLocation.capitalize() in ["Nixoterra", "Silvia", "Aquamundi", "Montelocus"]:
                 validInput = True
@@ -242,7 +268,7 @@ class GameSystem:
                     validInput = False
         if userLocation.capitalize() == "Quit":
             self.gameQuit(userName)
-            return
+            return gameReturn
         
         # Valid User Location found
         # Let's do the Qualifying quiz
@@ -258,39 +284,46 @@ class GameSystem:
         else:
             # Should not have reached here!
             self.gameQuit(userName)
-            return
+            return False
 
         userQualifying = [(i, world.qualifyingQuiz.questionAndAnswer.get(i)) for i in world.qualifyingQuiz.questionAndAnswer.keys()]
         qualifyingResults = world.qualifyingQuizMethod(userQualifying)
 
         print(f"{bcolors.OKGREEN}{userName}, you got {qualifyingResults} questions right. {bcolors.ENDC}")
+        
+        if qualifyingResults.capitalize() == "Quit":
+            self.gameQuit(userName)
+            return False
+
+        qualifyingResults = int(qualifyingResults)     
         if not qualifyingResults:
             # User failed the qualifying quiz
             # Exit the game already :)
             print(f"{bcolors.FAIL}You failed. {bcolors.ENDC}")
             self.gameExit(userName)
-            return
+            return gameReturn
 
         # User Qualified the quiz for the world
         # Let's initialize Classes for World and player
-        if userLocation.capitalize() == "Nixoterra":
-            world = Nixoterra()
-        elif userLocation.capitalize() == "Silvia":
-            world = Silvia()
-        elif userLocation.capitalize() == "Aquamundi":
-            world = Aquamundi()
-        elif userLocation.capitalize() == "Montelocus":
-            world = Montelocus()
-        else:
-            # Should not have reached here!
-            self.gameQuit(userName)
-            return
+        if 0:
+            if userLocation.capitalize() == "Nixoterra":
+                world = Nixoterra()
+            elif userLocation.capitalize() == "Silvia":
+                world = Silvia()
+            elif userLocation.capitalize() == "Aquamundi":
+                world = Aquamundi()
+            elif userLocation.capitalize() == "Montelocus":
+                world = Montelocus()
+            else:
+                # Should not have reached here!
+                self.gameQuit(userName)
+                return gameReturn
 
         player = User(userName, world, self)
 
-        print(f"worldName: {world.worldName} worldType: {world.worldType} essentials: {world.getEssentialList()}")
+        print(f"worldName: {world.worldName} \nworldType: {world.worldType} \nessentials: {world.getEssentialList()}")
 
-        print(f"Player Name: {player.name} Player Location: {player.location} Player Coins: {player.getCoins()} Player Gems: {player.getGems()}" )
+        print(f"Player Name: {player.name} \nPlayer Location: {player.location} \nPlayer Coins: {player.getCoins()} \nPlayer Gems: {player.getGems()}" )
 
         essentialsList = player.buyEssentials()
 
@@ -300,25 +333,33 @@ class GameSystem:
             # Exit the world with message
             print(f"{bcolors.FAIL}Quitting as {userName} didn't select any essential items to enter the new world.{bcolors.ENDC}")
             self.gameQuit(userName)
-            return                
+            return gameReturn               
 
         if essentialsList == "Quit":
             self.gameQuit(userName)
-            return
+            return gameReturn
 
         essentialsList = ", ".join(essentialsList)
         print(f"Player current coins: {player.getCoins()}")
         print(essentialsList)
 
-        player.buyGem()
+        if player.buyGem(self.buyGemAmount):
+            print(f"{userName} just bought one gem as it enters the world of {world.worldName}")
         
-        while True:
+        gameReturn = True
+        while gameReturn is True:
             userSurvival1 = [(i, world.survivalQuiz1.questionAndAnswer.get(i)) for i in world.survivalQuiz1.questionAndAnswer.keys()]
-            if userSurvival1[0][0].capitalize() == "Quit":
-                self.gameQuit(userName)
-                break
 
             survival1Results = world.qualifyingQuizMethod(userSurvival1)
+
+            if survival1Results.capitalize() == "Quit":
+                self.gameQuit(userName)
+                # User entered Quit exit the loop and return accordingly
+                gameReturn = False
+                break
+
+            survival1Results = int(survival1Results)
+
             if not survival1Results:
                 print("You failed. ")
             else:
@@ -328,11 +369,16 @@ class GameSystem:
                 print(f"Player current coins: {player.getCoins()} current Gems:{player.getGems()}")
             
             userSurvival2 = [(i, world.survivalQuiz2.questionAndAnswer.get(i)) for i in world.survivalQuiz2.questionAndAnswer.keys()]
-            if userSurvival2[0][0].capitalize() == "Quit":
-                self.gameQuit(userName)
-                break
-
             survival2Results = world.qualifyingQuizMethod(userSurvival2)
+            
+            if survival2Results.capitalize() == "Quit":
+                self.gameQuit(userName)
+                # User entered Quit exit the loop and return accordingly
+                gameReturn = False
+                break
+            
+            survival2Results = int(survival2Results)
+
             if not survival2Results:
                 print("You failed. ")
             else:
@@ -351,11 +397,11 @@ class GameSystem:
                     print(f"Player Won!!")
                     break
                 else:
-                    print(f"Not enough Coins! /n Play more survival Quiz to get enough Coins")
+                    print(f"Not enough Coins! \n Play more survival Quiz to get enough Coins")
             else:
-                print(f"Not enough Gems! /n Play more survival Quiz to get more Gems")
+                print(f"Not enough Gems! \n Play more survival Quiz to get more Gems")
                     
-        return
+        return gameReturn
 
     def gameQuit(self, name):
         self.gameQuitted = True
@@ -364,8 +410,6 @@ class GameSystem:
     def gameExit(self, name):
         print(f"{bcolors.FAIL}{name} failed in Qualifying quiz. {bcolors.ENDC}")
         print(f"{bcolors.FAIL}Exit the Game!{bcolors.ENDC}")
-
-
 
 game = GameSystem()
 
