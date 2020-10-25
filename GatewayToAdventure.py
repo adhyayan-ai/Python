@@ -214,14 +214,29 @@ class User:
         self.assets = essentialsList
         print(f"Currently, Player has {', '.join(self.assets)} in his essentialList")
 
-        return essentialsList
+        return self.assets
 
-    def takeQuiz(self):
-        self.takenQuiz = True
+    def getAssets(self):
+        return self.assets
 
-    def navigateToCapitalcity(self):
-        self.gems += 1
-        self.capitalcity = True
+    def takeSurvivalQuiz(self, quiz):
+        if quiz == 'survivalQuiz1':
+            userSurvival = [(i, self.location.survivalQuiz1.questionAndAnswer.get(i)) for i in self.location.survivalQuiz1.questionAndAnswer.keys()]
+        elif quiz == 'survivalQuiz2':
+            userSurvival = [(i, self.location.survivalQuiz2.questionAndAnswer.get(i)) for i in self.location.survivalQuiz2.questionAndAnswer.keys()]
+        else: 
+            # Wrong argument, should not have reached here. Return anyway!
+            userSurvival = "Quit"
+        survivalResults = self.location.qualifyingQuizMethod(userSurvival)
+        return survivalResults
+
+    def navigateToCapitalcity(self, amount=20):
+        navSuccess = False
+        if self.spendCoin(amount):
+            self.gems += 1
+            navSuccess = True
+        return navSuccess
+        
 
     # not sure if we need it.
     def quitGame(self):
@@ -241,9 +256,11 @@ class GameSystem:
         self.name = "Gateway To Adventure"
         self.minCorrectAnswers = 1
         self.minGems = 4
-        self.minCoins = 100
-        self.minGemCapitalCity = 3
+        self.minCoins = 25
+        self.minGemCapitalCity = 2
         self.buyGemAmount = 25
+        self.minEssentials = 3
+        self.maxAssetNum = 5
 
     def gameStart(self):        
         #if userLocation.capitalize() in ["Nixoterra", "Silvia", "Aquamundi", "Montelocus"]:
@@ -332,57 +349,97 @@ class GameSystem:
             print(f"{userName} just bought one gem as they enter the world of {world.worldName}")
         
         gameReturn = True
-        while gameReturn is True:
-            userSurvival1 = [(i, world.survivalQuiz1.questionAndAnswer.get(i)) for i in world.survivalQuiz1.questionAndAnswer.keys()]
+        
+        survival1Results = player.takeSurvivalQuiz('survivalQuiz1')
 
-            survival1Results = world.qualifyingQuizMethod(userSurvival1)
+        if str(survival1Results).capitalize() == "Quit":
+            self.gameQuit(userName)
+            # User entered Quit exit the loop and return accordingly
+            gameReturn = False
 
-            if str(survival1Results).capitalize() == "Quit":
-                self.gameQuit(userName)
-                # User entered Quit exit the loop and return accordingly
-                gameReturn = False
-                break
+        if not survival1Results:
+            print("You failed. ")
+            if len(player.getAssets()) > self.minEssentials:
+                survival1Results = player.takeSurvivalQuiz('survivalQuiz1')
 
-            if not survival1Results:
-                print("You failed. ")
-            else:
-                player.earnCoin(10 * survival1Results)
-                if survival1Results >= self.minCorrectAnswers:
-                    player.collectGem()
-                print(f"Player current coins: {player.getCoins()} current Gems:{player.getGems()}")
-            
-            userSurvival2 = [(i, world.survivalQuiz2.questionAndAnswer.get(i)) for i in world.survivalQuiz2.questionAndAnswer.keys()]
-            survival2Results = world.qualifyingQuizMethod(userSurvival2)
-            
-            if str(survival2Results).capitalize() == "Quit":
-                self.gameQuit(userName)
-                # User entered Quit exit the loop and return accordingly
-                gameReturn = False
-                break
-            
-            if not survival2Results:
-                print("You failed. ")
-            else:
-                player.earnCoin(10 * survival2Results)
-                if survival2Results >= self.minCorrectAnswers:
-                    player.collectGem()
-                print(f"Player current coins: {player.getCoins()} current Gems:{player.getGems()}")
+                if str(survival1Results).capitalize() == "Quit":
+                    self.gameQuit(userName)
+                    # User entered Quit exit the loop and return accordingly
+                    gameReturn = False
 
-            if player.getGems() >= self.minGemCapitalCity:
-                player.navigateToCapitalcity()
-
-            # Check if Player has enough gems to win the game
-            if player.getGems() >= self.minGems:
-                # Check if Player has enough coins to win the game
-                if player.getCoins() >= self.minCoins:
-                    print(f"Player Won!!")
-                    break
+                if not survival1Results:
+                    print("You failed again. ")
                 else:
-                    print(f"You need {self.minCoins-player.getCoins()} to win the game!")
+                    player.earnCoin(10 * survival1Results)
+                    if survival1Results >= self.minCorrectAnswers:
+                        player.collectGem()
+                    print(f"Player current coins: {player.getCoins()} current Gems:{player.getGems()}")        
+        else:
+            player.earnCoin(10 * survival1Results)
+            if survival1Results >= self.minCorrectAnswers:
+                player.collectGem()
+            print(f"Player current coins: {player.getCoins()} current Gems:{player.getGems()}")
+        
+        survival2Results = player.takeSurvivalQuiz('survivalQuiz2')
+
+        if str(survival2Results).capitalize() == "Quit":
+            self.gameQuit(userName)
+            # User entered Quit exit the loop and return accordingly
+            gameReturn = False
+
+        if not survival2Results:
+            print("You failed. ")
+            if len(player.getAssets()) > self.minEssentials:
+                survival2Results = player.takeSurvivalQuiz('survivalQuiz2')
+
+                if str(survival2Results).capitalize() == "Quit":
+                    self.gameQuit(userName)
+                    # User entered Quit exit the loop and return accordingly
+                    gameReturn = False
+
+                if not survival2Results:
+                    print("You failed again. ")
+                else:
+                    player.earnCoin(10 * survival2Results)
+                    if survival2Results >= self.minCorrectAnswers:
+                        player.collectGem()
+                    print(f"Player current coins: {player.getCoins()} current Gems:{player.getGems()}")        
+        else:
+            player.earnCoin(10 * survival2Results)
+            if survival2Results >= self.minCorrectAnswers:
+                player.collectGem()
+            print(f"Player current coins: {player.getCoins()} current Gems:{player.getGems()}")
+
+        # Navigate to Capital City  
+        if player.getGems() >= self.minGemCapitalCity:
+            if len(player.getAssets()) == self.maxAssetNum :
+                player.navigateToCapitalcity(10)
             else:
-                print(f"You need {self.minCoins-player.getCoins()} to win the game!")
-                    
-        return
+                player.navigateToCapitalcity()
+            
+            print(f"Player current coins: {player.getCoins()} current Gems:{player.getGems()}")
+            
+            response = input(f"Do you want to buy addditional Gem for 25 coins? (y/n) ").lower()
+            if response == 'y':
+                player.buyGem(25)
+                print(f"user bought one gem")
+            elif response == 'n':
+                print(f"{userName} declined offer")
+            else:
+                print(f"Invalid argument!")
+
+        # Check if Player has enough gems to win the game
+        if player.getGems() >= self.minGems:
+            # Check if Player has enough coins to win the game
+            if player.getCoins() >= self.minCoins:
+                print(f"Player {userName} Won!!")
+            else:
+                print(f"You need {self.minCoins} to win the game!")
+        else:
+            print(f"You need {self.minGems} to win the game!")
+                
+        return gameReturn
+
     def gameQuit(self, name):
         self.gameQuitted = True
         print(f"{bcolors.FAIL}Quitting as {name} wants to quit the game.{bcolors.ENDC}")
