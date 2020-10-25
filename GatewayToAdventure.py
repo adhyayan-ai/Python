@@ -1,3 +1,13 @@
+#ToDos:
+# Capital City of Worlds? Name or remove attribute
+# Put Docstring
+# Put valuable print statements with proper color, indentation, lines etc
+# Put str or repr methods
+# Put more comments, if needed
+# Trim down gamestart() length to half, if needed
+# Separate all classes except GameSystem to other py files, if needed
+# import dictionary in another class and use it throough a cloass method. Stretch Goal
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
