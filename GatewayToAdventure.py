@@ -90,8 +90,8 @@ class Nixoterra(GameWorld):
         self.worldName = "Nixoterra"
         self.worldType = "SnowWorld"
         self.essentials = ["Plough", "Car"]
-        # ToDo: Fill real name of cpital city
-	self.capitalCity = "cNTerra"
+        #ToDo: Fill real name of cpital city
+        self.capitalCity = "cNTerra"
         self.qualifyingQuiz = QualifyingQuiz(Nixoterra.qNADictQ)
         self.survivalQuiz1 = SurvivalQuiz(Nixoterra.qNADictS1)
         self.survivalQuiz2 = SurvivalQuiz(Nixoterra.qNADictS2)
@@ -337,13 +337,11 @@ class GameSystem:
 
             survival1Results = world.qualifyingQuizMethod(userSurvival1)
 
-            if survival1Results.capitalize() == "Quit":
+            if str(survival1Results).capitalize() == "Quit":
                 self.gameQuit(userName)
                 # User entered Quit exit the loop and return accordingly
                 gameReturn = False
                 break
-
-            survival1Results = int(survival1Results)
 
             if not survival1Results:
                 print("You failed. ")
@@ -356,14 +354,12 @@ class GameSystem:
             userSurvival2 = [(i, world.survivalQuiz2.questionAndAnswer.get(i)) for i in world.survivalQuiz2.questionAndAnswer.keys()]
             survival2Results = world.qualifyingQuizMethod(userSurvival2)
             
-            if survival2Results.capitalize() == "Quit":
+            if str(survival2Results).capitalize() == "Quit":
                 self.gameQuit(userName)
                 # User entered Quit exit the loop and return accordingly
                 gameReturn = False
                 break
             
-            survival2Results = int(survival2Results)
-
             if not survival2Results:
                 print("You failed. ")
             else:
