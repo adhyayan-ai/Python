@@ -1538,6 +1538,59 @@ tries = 0
 
 encrypted = ("-" * len(word))
 
+
+hangman_body = [
+    """0
+       |
+       |
+     __|__
+       |
+       |
+       |
+     |||||""",
+    """0
+       |
+       |
+     __|__
+       |
+       |
+       |
+           """,
+    """0
+       |
+       |
+     __|__
+       |
+       |
+           """,
+    """0
+       |
+       |
+     __|__
+       |
+           """,
+    """0
+       |
+       |
+     __|__
+            """,
+    """0
+       |
+       |
+       |    """,
+    """0
+       |
+       |
+            """,
+    """0
+       |    """,
+    """0
+            """,
+    """O"""
+
+]
+
+
 while tries < 10:
     prompt = input("Guess a letter here: ")
     prompt = prompt.upper()
@@ -1548,24 +1601,29 @@ while tries < 10:
         print(word)
 
     if prompt in word:
+        if prompt == word:
+            print("You won!")
+            break
         for x in letters:
             position += 1
             if x == prompt:
                 encrypted = list(encrypted)
                 encrypted[position] = f"{prompt}"
                 encrypted = ("".join(encrypted))
+                if tries == 0:
+                    print(hangman_body[0])
+                elif tries == 1:
+                    print(hangman_body[1])
+                else:
+                    print(hangman_body[((tries))])
                 print(encrypted)    
-
-
-
-
-
     elif prompt not in word:
         tries += 1
         print(encrypted)
         print("Oops!", prompt, "was not in the word, you have only", (10 - tries), "tries left!")
         if tries == 10:
             print("You lost! :( The word was: ", word)
+            
     if "-" not in encrypted:
         print("You won! I hope you liked it!")
         break
