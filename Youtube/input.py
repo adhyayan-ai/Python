@@ -1,0 +1,1 @@
+password = input("What is the password? ")

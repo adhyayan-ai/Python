@@ -1,0 +1,176 @@
+Lesson #8 (Video 10): Python Dictionaries
+
+Dictionaries:
+
+    Define a dictionary by using {} curly braces
+    Example:
+        myDict = {'Hi': 'Hello', 'Bye': 'See you later'}
+
+    To access the value that corresponds with a key, index the dictionary
+    Example:
+        value = myDict['Hi']
+        print(value)
+            > Hello
+
+    To delete a key, use the del keyword
+    Example:
+        del myDict['Hi']
+
+    To add a key or update the value of the key, use the following syntax:
+    Example:
+        myDict['Yes'] = 'Yeah' #Adding a new key
+        myDict['Hi'] = 'Hola!' #Updating an existing key
+
+    To get a list of keys and values, follow these steps
+    Example:
+        print(myDict.keys())
+        print(myDict.values())
+
+    Dictionaries are amazing, but they have a few restrictions:
+
+        1. The keys should be immutable, or unchangeable
+        2. Duplicate keys are not allowed. Each key overrides the value of the previous key.
+
+    ADVANCED:
+    
+        for key, value in myDict.items():
+            print("Another way of saying", key, "is", value)
+
+
+
+
+
+
+
+
+
+
+
+Try and Expect:
+
+Errors can be confusing, but we can catch them and handle them.
+
+Under "Try", we put the actions we want to do (e.g. Print something or add 2 integers).
+
+If those specific actions give us an error, the "except" keyword lets Python
+know that it shouldn't throw an error, as we ourselves will handle it.
+
+Under "Except", we put the actions that should be done if the "try" actions give an error.
+
+The 'Finally" keyword is a keyword that allows an action to be done whether or not we
+get an error.
+
+
+
+
+
+
+
+
+Lesson #10: Functions
+
+Functions are very fundamental and useful aspects of programming. They take the role of tools that help
+develop strong and clean code.
+
+print(), round(), and int() are just some examples of Python's built-in functions.
+
+Using the "def" keyword, we can define our own functions. This way, we can reduce the 
+repetition of code and well as improve its readablity.
+
+Important definitions to know:
+
+Function - A piece of code that performs an action when called.
+
+Parameter(s) - The place where the value(s) must be passed in a function
+
+Argument(s) - The actual value(s) being plugged into the function.
+
+Return Value - The value a function outputs after doing a certain action. A return value
+is not required in some functions.
+
+
+
+
+
+
+
+
+Extra Must-Know components of Python.
+
+1. List Comprehension:
+
+Easy one-line way to make a list.
+
+Syntax:
+
+
+[i for i in range(5)]`
+[i for i in range(5) if i > 2]
+[i if i > 2 else None for i in range(5)]
+
+
+2. lambda
+
+Anonymous one-time use function.
+
+3. filter
+
+Filters out certain elements from a sequence.
+
+Filter this list to only contain animals names that have 5 or more letters:
+
+animals = [cat, dog, lion, fish, llama, giraffe, tiger, owl]
+
+
+
+
+
+
+Classes And Objects:
+
+    Classes:
+        - In Python, a class is like a blueprint that defines certain properties of an object.
+        - A class can be seen as a cookie cutter, an object that defines the shape of a cookie.
+
+        Syntax:
+            - The Syntax of creating a class is class <name of the class>. For example:
+
+                class Vehicle:
+                    <properties of the object>
+        - It is always a good practice to define an __init__ method to store attributes of a class.
+        - Inside classses, we can define attributes or methods that allow an object to
+        perform certain tasks and hold data.
+
+            The Syntax for attributes is similar to that of a normal variable in python.
+            The Syntax for methods is similar to that of a normal function in python.
+
+    Objects:
+
+    Syntax:
+
+        car = Vehicle(<arguments coresponding with the parameters in the __init__ function>)
+
+        - The attributes and methods of an object can be called upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

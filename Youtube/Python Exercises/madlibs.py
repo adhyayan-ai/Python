@@ -1,0 +1,12 @@
+name1 = input("Enter a name: ")
+name2 = input("Enter another name: ")
+adjective1 = input("Enter an adjective here: ")
+adjective2 = input("Enter another adjective here: ")
+adverb1 = input("Enter an adverb: ")
+noun1 = input("Enter a noun: ")
+noun2 = input("Enter another noun: ")
+place1 = input("Enter a place: ")
+pastTenseVerb1 = input("Enter a past-tense verb: ")
+pastTenseVerb2 = input("Enter another past-tense verb: ")
+
+print(f"Everyone in {name1}'s class was {adjective1} on Valentine's Day. They were {adverb1} {adjective2} to hear about the {noun1} that {pastTenseVerb1} in {place1}. To finish off their day, {name1}'s friend {name2} {pastTenseVerb2} on everyone's {noun2}")

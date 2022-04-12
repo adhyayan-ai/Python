@@ -1,0 +1,43 @@
+Add: 
+
+nums = []
+total = 0
+while True:
+    prompt = input('Enter a number here or enter "add" to add all the numbers: ')
+    if prompt == "add":
+        for i in nums:
+            total += i
+        print("The sum of all the numbers you entered is", total)
+        break
+    else:
+        nums.append(int(prompt))
+
+Prime:
+
+num = int(input("What's the num: "))
+prime = True
+
+for i in range(2, num):
+    if num % i == 0:
+        prime = False
+        break
+
+if prime:
+    print(num, "is a prime number.")
+else:
+    print(num, "is not a prime number.")
+
+Fibonacci:
+
+FibNums = [1]
+num = int(input("How many numbers of the fibonacci sequence do you want? "))
+first = 0
+second = 1
+
+for i in range(num-1):
+    addition = first + second
+    FibNums.append(addition)
+    first = second
+    second = addition
+
+print("The first", num, "numbers in the fibonacci sequence are:", FibNums)
